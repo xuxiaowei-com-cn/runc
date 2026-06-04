@@ -36,6 +36,7 @@ RUN KEYFILE=/usr/share/keyrings/criu-repo-keyring.gpg; \
         gcc-powerpc64le-linux-gnu libc-dev-ppc64el-cross \
         gcc-s390x-linux-gnu libc-dev-s390x-cross \
         gcc-riscv64-linux-gnu libc-dev-riscv64-cross \
+        gcc-loongarch64-linux-gnu libc-dev-loong64-cross \
     && apt-get clean \
     && rm -rf /var/cache/apt /var/lib/apt/lists/* /etc/apt/sources.list.d/*.list
 
@@ -54,7 +55,7 @@ RUN cd /tmp \
     && ./install.sh /usr/local \
     && rm -rf /tmp/bats-core
 
-ARG RELEASE_ARCHES="386 amd64 arm64 armel armhf ppc64le riscv64 s390x"
+ARG RELEASE_ARCHES="386 amd64 arm64 armel armhf loong64 ppc64le riscv64 s390x"
 ENV DYLIB_DIR=/opt/runc-dylibs
 
 # install libseccomp

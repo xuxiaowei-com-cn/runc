@@ -53,6 +53,9 @@ function set_cross_vars() {
 	ppc64le)
 		HOST=powerpc64le-${PLATFORM}
 		;;
+	loong64)
+		HOST=loongarch64-${PLATFORM}
+		;;
 	riscv64)
 		HOST=riscv64-${PLATFORM}
 		;;
