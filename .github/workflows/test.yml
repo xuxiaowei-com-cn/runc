@@ -166,7 +166,7 @@ jobs:
         docker run --rm -v $PWD:/go/src/github.com/opencontainers/runc -w /go/src/github.com/opencontainers/runc \
           golang:1-trixie bash -euo pipefail -c "
             git config --global --add safe.directory /go/src/github.com/opencontainers/runc
-            apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross wget
+            apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross wget gperf
 
             # Cross-compile libseccomp for loongarch64
             SECCOMP_VER=2.6.0
