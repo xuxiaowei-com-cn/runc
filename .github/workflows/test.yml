@@ -167,8 +167,6 @@ jobs:
           golang:1-trixie bash -euo pipefail -c "
             git config --global --add safe.directory /go/src/github.com/opencontainers/runc
             apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross libseccomp-dev
-            make GOARCH=loong64 CC=loongarch64-linux-gnu-gcc all
-            file runc
             make GOARCH=loong64 CC=loongarch64-linux-gnu-gcc static
             file runc
           "
