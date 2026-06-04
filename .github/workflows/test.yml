@@ -166,8 +166,17 @@ jobs:
         docker run --rm -v $PWD:/go/src/github.com/opencontainers/runc -w /go/src/github.com/opencontainers/runc \
           golang:1-trixie bash -euo pipefail -c "
             git config --global --add safe.directory /go/src/github.com/opencontainers/runc
-            apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross libseccomp-dev
-            make GOARCH=loong64 CC=loongarch64-linux-gnu-gcc static
+            apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross wget
+
+            # Cross-compile libseccomp for loongarch64
+            SECCOMP_VER=2.6.0
+            SECCOMP_SHA256=83b6085232d1588c379dc9b9cae47bb37407cf262e6e74993c61ba72d2a784dc
+            wget -q https://github.com/seccomp/libseccomp/releases/download/v\${SECCOMP_VER}/libseccomp-\${SECCOMP_VER}.tar.gz
+            echo \"\${SECCOMP_SHA256}  libseccomp-\${SECCOMP_VER}.tar.gz\" | sha256sum -c
+            tar xf libseccomp-\${SECCOMP_VER}.tar.gz
+            (cd libseccomp-\${SECCOMP_VER} && ./configure --host=loongarch64-linux-gnu --prefix=/usr/local/loong64 && make -j\$(nproc) && make install)
+
+            PKG_CONFIG_PATH=/usr/local/loong64/lib/pkgconfig make GOARCH=loong64 CC=loongarch64-linux-gnu-gcc static
             file runc
           "
 #
