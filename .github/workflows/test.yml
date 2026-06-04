@@ -149,6 +149,7 @@ jobs:
 #        sudo -E PATH="$PATH" script -e -c 'make RUNC_USE_SYSTEMD=yes local${{ matrix.rootless }}integration'
 
   # loong64 (LoongArch 64-bit) cross-compile build check.
+  # gcc-loongarch64-linux-gnu is only available in Debian 13+, so we use Docker.
   cross-loong64:
     timeout-minutes: 15
     strategy:
@@ -160,28 +161,16 @@ jobs:
     - name: checkout
       uses: actions/checkout@v5
 
-    - name: install deps
+    - name: build in Docker (Debian 13)
       run: |
-        sudo apt update
-        sudo apt -qy install gcc-loongarch64-linux-gnu libc-dev-loong64-cross libseccomp-dev
-
-    - name: install go
-      uses: actions/setup-go@v6
-      with:
-        go-version: 1.x # Latest stable
-        check-latest: true
-
-    - name: build
-      run: sudo -E PATH="$PATH" -- make GOARCH=loong64 all
-
-    - name: file runc
-      run: file runc
-
-    - name: static build
-      run: sudo -E PATH="$PATH" -- make GOARCH=loong64 static
-
-    - name: file runc (static)
-      run: file runc
+        docker run --rm -v $PWD:/go/src/github.com/opencontainers/runc -w /go/src/github.com/opencontainers/runc \
+          golang:1-trixie bash -euo pipefail -c "
+            apt-get update && apt-get -y install gcc-loongarch64-linux-gnu libc-dev-loong64-cross libseccomp-dev
+            make GOARCH=loong64 all
+            file runc
+            make GOARCH=loong64 static
+            file runc
+          "
 #
 #  # We need to continue support for 32-bit ARM.
 #  # However, we do not have 32-bit ARM CI, so we use i386 for testing 32bit stuff.
